@@ -1,26 +1,42 @@
 package com.example.MovieJPA.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import java.util.HashSet;
+import java.util.Set;
 
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table(name = "movies")
+@Data
 public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
-    private String director;
-    private int releaseYear;
-    private Double rating;
-    private boolean watched;
 
-    @OneToOne(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private MovieDetails movieDetails;
+    private String title;
+    private int releaseYear;
+    private boolean watched;
+    private Double rating;
+
+    @ManyToOne
+    @JoinColumn(name = "genre_id")
+    private Genre genre;
+
+    @ManyToOne
+    @JoinColumn(name = "director_id")
+    private Director director;
+
+    @ManyToMany
+    @JoinTable(
+            name = "movie_actors",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "actor_id")
+    )
+    private Set<Actor> actors = new HashSet<>();
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "details_id", unique = true)
+    private MovieDetails details;
 }
