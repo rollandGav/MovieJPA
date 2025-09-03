@@ -3,17 +3,19 @@ package com.example.MovieJPA.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @Entity
-@Table(name = "movies_details")
-public class MovieDetails {
+@Table(name = "directors")
+public class Director {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int duration;
-    private String language;
-    @Column(length = 500)
-    private String synopsis;
+    private String name;
+
+    @OneToMany(mappedBy = "director")
+    private List<Movie> movies;
 }

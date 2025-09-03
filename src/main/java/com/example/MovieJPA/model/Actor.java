@@ -1,19 +1,22 @@
 package com.example.MovieJPA.model;
 
+
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.Set;
+
 @Data
 @Entity
-@Table(name = "movies_details")
-public class MovieDetails {
+@Table(name = "actors")
+public class Actor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int duration;
-    private String language;
-    @Column(length = 500)
-    private String synopsis;
+    private String name;
+
+    @ManyToMany(mappedBy = "actors")
+    private Set<Movie> movies;
 }
