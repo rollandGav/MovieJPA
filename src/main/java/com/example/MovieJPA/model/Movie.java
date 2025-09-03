@@ -20,4 +20,7 @@ public class Movie {
     private int releaseYear;
     private Double rating;
     private boolean watched;
+
+    @OneToOne(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private MovieDetails movieDetails;
 }

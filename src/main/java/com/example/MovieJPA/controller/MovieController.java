@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -36,4 +37,32 @@ public class MovieController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/director/{director}/{releasedYear}")
+    public ResponseEntity<List<Movie>> getByDirectorAndYear(@PathVariable String director, @PathVariable int releasedYear){
+        return ResponseEntity.ok(service.findByDirectorAndReleaseYear(director,releasedYear));
+    }
+
+    @GetMapping("/watched")
+    public ResponseEntity<List<Movie>> getMoviesByWatched(){
+        return ResponseEntity.ok(service.findByWatchedTrue());
+    }
+
+    @GetMapping("/rating/{rating}")
+    public ResponseEntity<List<Movie>> getMoviesByRating(@PathVariable Double rating){
+        return ResponseEntity.ok(service.findByRatingGreaterThan(rating));
+    }
+
+    @GetMapping("/ratingSQL/{rating}")
+    public ResponseEntity<List<Movie>> getMoviesByRatingSQL(
+            @PathVariable Double rating
+    ){
+        return ResponseEntity.ok(service.findMoviesByRatingWithSQL(rating));
+    }
+
+    @GetMapping("/ratingNativeSQL/{rating}")
+    public ResponseEntity<List<Movie>> getMoviesByRatingNativeSQL(
+            @PathVariable Double rating
+    ){
+        return ResponseEntity.ok(service.findMoviesByRatingWithNativeSQL(rating));
+    }
 }
