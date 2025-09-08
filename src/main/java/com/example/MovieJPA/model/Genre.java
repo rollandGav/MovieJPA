@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @Entity
@@ -17,4 +18,16 @@ public class Genre {
 
     @OneToMany(mappedBy = "genre")
     private List<Movie> movies;
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Genre genre = (Genre) o;
+        return Objects.equals(id, genre.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null? id.hashCode() : 0;
+    }
 }

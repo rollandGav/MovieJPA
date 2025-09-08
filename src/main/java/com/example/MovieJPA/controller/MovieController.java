@@ -30,8 +30,10 @@ public class MovieController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Movie>> getMovieById(@PathVariable Long id){
-        return ResponseEntity.ok(service.findById(id));
+    public ResponseEntity<MovieDto> getMovieById(@PathVariable Long id){
+        Optional<Movie> movieOptional = service.findById(id);
+        return movieOptional.map(movie -> ResponseEntity.ok(service.toDto(movie)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
@@ -41,13 +43,17 @@ public class MovieController {
     }
 
     @GetMapping("/watched")
-    public ResponseEntity<List<Movie>> getMoviesByWatched(){
-        return ResponseEntity.ok(service.findByWatchedTrue());
+    public ResponseEntity<List<MovieDto>> getMoviesByWatched(){
+        List<Movie> movies = service.findByWatchedTrue();
+        List<MovieDto> movieDtos = movies.stream().map(service::toDto).collect(Collectors.toList());
+        return ResponseEntity.ok(movieDtos);
     }
 
     @GetMapping("/rating/{rating}")
-    public ResponseEntity<List<Movie>> getMoviesByRating(@PathVariable Double rating){
-        return ResponseEntity.ok(service.findByRatingGreaterThan(rating));
+    public ResponseEntity<List<MovieDto>> getMoviesByRating(@PathVariable Double rating){
+        List<Movie> movies = service.findByRatingGreaterThan(rating);
+        List<MovieDto> movieDtos = movies.stream().map(service::toDto).collect(Collectors.toList());
+        return ResponseEntity.ok(movieDtos);
     }
 
 }

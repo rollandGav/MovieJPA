@@ -4,6 +4,7 @@ package com.example.MovieJPA.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.Objects;
 import java.util.Set;
 
 @Data
@@ -19,4 +20,16 @@ public class Actor {
 
     @ManyToMany(mappedBy = "actors")
     private Set<Movie> movies;
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Actor actor = (Actor) o;
+        return Objects.equals(id, actor.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null? id.hashCode() : 0;
+    }
 }
