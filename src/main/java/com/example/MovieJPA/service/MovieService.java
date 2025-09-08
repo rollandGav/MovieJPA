@@ -1,14 +1,14 @@
 package com.example.MovieJPA.service;
 
+import com.example.MovieJPA.exception.EmailSedingException;
+import com.example.MovieJPA.exception.ServiceException;
 import com.example.MovieJPA.model.*;
 import com.example.MovieJPA.model.dto.MovieDto;
 import com.example.MovieJPA.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,6 +24,8 @@ public class MovieService {
     ActorRepository actorRepo;
     @Autowired
     GenreRepository genreRepo;
+    @Autowired
+    EmailService emailService;
 
     public Movie save(Movie movie) {
         return movieRepo.save(movie);
@@ -119,5 +121,37 @@ public class MovieService {
             dto.setSynopsis(movie.getDetails().getSynopsis());
         }
         return dto;
+    }
+
+    public MovieDto addMovieToWatchList(Long id, String email) {
+        Movie movie = movieRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Movie not found"));
+        movie.setWatchList(true);
+        Movie saved = movieRepo.save(movie);
+        MovieDto movieDto = toDto(saved);
+
+        String subject = "Movie added to your watchList";
+        String body = "You have added a new movie to your watchList: \n" +
+                "Movie{" +
+                ", title='" + movieDto.getTitle() + '\'' +
+                ", releaseYear=" + movieDto.getReleaseYear() +
+                ", rating=" + movieDto.getRating() +
+                ", watched=" + movieDto.isWatched() +
+                ", watchList=" + movieDto.isWatchList() +
+                "genreName= " +movieDto.getGenreName()+
+                ", directorName='" + movieDto.getDirectorName() + '\'' +
+                ", actorNames=" + String.join(",", movieDto.getActorNames() != null ? movieDto.getActorNames() : Collections.emptyList()) +
+                ", duration=" + movieDto.getDuration() +
+                ", language='" + movieDto.getLanguage() + '\'' +
+                ", synopsis='" + movieDto.getSynopsis() + '\'' +
+                '}';
+
+        try {
+            emailService.sentEmail(email, subject, body);
+        }catch (EmailSedingException e){
+            throw new ServiceException("Movie updated but email sending failed", "ERROR_ON_EMAIL_SENDING");
+        }
+
+
+        return movieDto;
     }
 }

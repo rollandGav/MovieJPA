@@ -20,6 +20,7 @@ public class Movie {
     private int releaseYear;
     private Double rating;
     private boolean watched;
+    private boolean watchList;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "details_id", unique = true)

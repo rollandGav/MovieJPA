@@ -56,4 +56,10 @@ public class MovieController {
         return ResponseEntity.ok(movieDtos);
     }
 
+    @PutMapping("/watchList/{id}")
+    public ResponseEntity<MovieDto> addToWatchList(@PathVariable Long id, @RequestParam String email){
+        MovieDto updated = service.addMovieToWatchList(id, email);
+        return ResponseEntity.ok(updated);
+    }
+
 }
